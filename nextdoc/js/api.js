@@ -5,7 +5,7 @@
 // o app continua funcionando 100% com o IndexedDB (modo simples).
 
 const SecureAPI = (function () {
-  const BASE_URL = "https://nexdoc-api.onrender.com";
+  const BASE_URL = "https://nexdoc-api.onrender.com/api";
   let available = null; // null = ainda não checado
 
   function withTimeout(promise, ms) {
