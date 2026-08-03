@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextDoc — Mais que documentos. Soluções para o amanhã.</title>
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 64 64" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="ndGrad" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0" stop-color="#4c1d95"/>
+            <stop offset="1" stop-color="#c026d3"/>
+          </linearGradient>
+        </defs>
+        <polyline points="8,52 8,12 30,52 30,12" fill="none" stroke="url(#ndGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M28 10h16l10 10v30a4 4 0 0 1-4 4H32a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4Z" fill="#fff" stroke="#181829" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M44 10v10h10" fill="none" stroke="#181829" stroke-width="2.5" stroke-linejoin="round"/>
+        <line x1="32" y1="32" x2="46" y2="32" stroke="url(#ndGrad)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="32" y1="38" x2="46" y2="38" stroke="url(#ndGrad)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="32" y1="44" x2="40" y2="44" stroke="url(#ndGrad)" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="login-title"><span class="nd-next">Next</span><span class="nd-doc">doc</span></p>
+    <p class="login-sub">Mais que documentos.<br>Soluções para o <b>amanhã</b>.</p>
+
+    <div id="login-error" class="login-error hidden">Usuário ou senha inválidos.</div>
+
+    <form id="login-form">
+      <div class="field">
+        <label for="username">Usuário</label>
+        <input type="text" id="username" placeholder="Nome de usuário" autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="password">Senha</label>
+        <input type="password" id="password" placeholder="Sua senha" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-primary">Entrar</button>
+    </form>
+
+    <div class="login-hint">
+      <b>Credenciais de teste:</b><br>
+      Corporativo: <b>corporativo</b> / corp123<br>
+      Comum: <b>comum</b> / user123
+    </div>
+    <p class="login-footer">🔒 Seus documentos estão seguros conosco</p>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app-screen" class="hidden">
+  <div class="mobile-topbar">
+    <button id="hamburger-btn" onclick="__toggleSidebar()" title="Menu">☰</button>
+    <span class="mobile-title">NextDoc</span>
+  </div>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="__toggleSidebar()"></div>
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">
+        <svg viewBox="0 0 64 64" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="8,52 8,12 30,52 30,12" fill="none" stroke="url(#ndGrad)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M28 10h16l10 10v30a4 4 0 0 1-4 4H32a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4Z" fill="#fff" stroke="#181829" stroke-width="3" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span>NextDoc</span>
+    </div>
+
+    <button class="nav-item" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Dashboard</button>
+    <button class="nav-item" data-page="pastas"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg> Minhas Pastas</button>
+    <button class="nav-item" data-page="compartilhados"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-3.9M8.6 13.5l6.8 3.9"/></svg> Compartilhados</button>
+    <button class="nav-item" data-page="recentes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Recentes</button>
+    <button class="nav-item" data-page="lixeira"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0-1 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 6"/></svg> Lixeira</button>
+    <button class="nav-item" data-page="atividades"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/><path d="M3 12h2m14 0h2M12 3v2m0 14v2"/></svg> Atividades</button>
+    <button class="nav-item" data-page="configuracoes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg> Configurações</button>
+
+    <div class="sidebar-user">
+      <b id="sidebar-username">—</b>
+      <span id="sidebar-usertype">—</span>
+      <button class="logout-btn" id="logout-btn">Sair</button>
+    </div>
+  </div>
+
+  <div class="main" id="main-content"></div>
+</div>
+
+<div class="modal-overlay hidden" id="preview-modal" onclick="if(event.target===this) __closePreview()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="__closePreview()">✕</button>
+    <div class="modal-preview-icon">📄</div>
+    <h3 id="preview-name">—</h3>
+    <div class="file-meta" id="preview-meta" style="display:flex;">—</div>
+    <div class="preview-page">
+      <div class="preview-line"></div>
+      <div class="preview-line"></div>
+      <div class="preview-line"></div>
+      <div class="preview-line"></div>
+    </div>
+    <p class="preview-note">🔒 Pré-visualização protegida — conteúdo real disponível após o download</p>
+    <button class="btn-primary" id="preview-download-btn">Baixar arquivo</button>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="edit-modal" onclick="if(event.target===this) __closeEdit()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="__closeEdit()">✕</button>
+    <div class="modal-preview-icon">✏️</div>
+    <h3>Renomear / Mover Documento</h3>
+    <div class="form-row" style="text-align:left;">
+      <label>Nome do arquivo</label>
+      <input type="text" id="edit-name">
+    </div>
+    <div class="form-row" style="text-align:left;">
+      <label>Mover para pasta</label>
+      <select id="edit-folder"></select>
+    </div>
+    <button class="btn-primary" onclick="__saveEdit()">Salvar alterações</button>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="confirm-modal" onclick="if(event.target===this) __closeConfirm()">
+  <div class="modal-box">
+    <div class="modal-preview-icon">⚠️</div>
+    <h3 id="confirm-title">Tem certeza?</h3>
+    <p id="confirm-text" style="color:var(--text-soft);font-size:13px;margin-bottom:20px;">Esta ação não pode ser desfeita.</p>
+    <div style="display:flex;gap:10px;">
+      <button class="icon-btn" style="flex:1;height:40px;" onclick="__closeConfirm()">Cancelar</button>
+      <button class="btn-primary" style="flex:1;background:var(--red);" id="confirm-btn">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+
+<script src="js/db.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+
+
+</body>
+</html>

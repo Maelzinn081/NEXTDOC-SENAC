@@ -1,0 +1,17 @@
+{
+  "name": "nextdoc-server",
+  "version": "1.0.0",
+  "description": "API Node.js que conecta o NextDoc a um banco Oracle via node-oracledb, executando a lógica do pacote PL/SQL pkg_nextdoc.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "oracledb": "^6.5.1"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "nextdoc-api",
+  "version": "1.0.0",
+  "description": "API própria do NextDoc — zero dependências externas, usa só módulos nativos do Node.js. Fácil de hospedar em qualquer lugar que rode Node.",
+  "main": "server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {}
+}

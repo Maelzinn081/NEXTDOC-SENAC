@@ -1,0 +1,77 @@
+{
+  "users": {
+    "corporativo": {
+      "password": "corp123",
+      "type": "Corporativo",
+      "label": "Acesso total",
+      "email": "corporativo@nextdoc.local"
+    },
+    "comum": {
+      "password": "user123",
+      "type": "Comum",
+      "label": "Acesso restrito a funcionalidades básicas",
+      "email": "comum@nextdoc.local"
+    }
+  },
+  "nextId": 200,
+  "docs": [
+    {
+      "id": 1,
+      "name": "Relatório Mensal.pdf",
+      "folder": "Trabalho",
+      "date": "22/07/2026 14:30",
+      "size": "5.2 MB"
+    },
+    {
+      "id": 2,
+      "name": "Nota Fiscal 001.pdf",
+      "folder": "Financeiro",
+      "date": "22/07/2026 10:15",
+      "size": "3.1 MB"
+    },
+    {
+      "id": 3,
+      "name": "Apresentação.pdf",
+      "folder": "Trabalho",
+      "date": "20/07/2026 09:45",
+      "size": "8.3 MB"
+    },
+    {
+      "id": 4,
+      "name": "Contrato 2026.pdf",
+      "folder": "Jurídico",
+      "date": "19/07/2026 16:20",
+      "size": "4.5 MB"
+    },
+    {
+      "id": 5,
+      "name": "Documento Pessoal 1.pdf",
+      "folder": "Pessoal",
+      "date": "18/07/2026 08:10",
+      "size": "1.2 MB"
+    },
+    {
+      "id": 6,
+      "name": "Recibo Consulta.pdf",
+      "folder": "Médico",
+      "date": "17/07/2026 12:00",
+      "size": "0.8 MB"
+    }
+  ],
+  "trash": [],
+  "shared": [
+    {
+      "id": 101,
+      "name": "Proposta Comercial.pdf",
+      "from": "ana.souza@empresa.com",
+      "date": "21/07/2026"
+    },
+    {
+      "id": 102,
+      "name": "Manual do Colaborador.pdf",
+      "from": "rh@empresa.com",
+      "date": "15/07/2026"
+    }
+  ],
+  "activityLog": []
+}
