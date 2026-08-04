@@ -105,7 +105,23 @@ async function handleRequest(req, res) {
   if (method === "OPTIONS") { // preflight de CORS
     return sendJSON(res, 204, {});
   }
-
+  // Página inicial
+if (pathname === "/" && method === "GET") {
+  return sendJSON(res, 200, {
+    projeto: "NextDoc API",
+    status: "Online",
+    versao: "1.0.0",
+    endpoints: [
+      "/api/health",
+      "/api/login",
+      "/api/docs",
+      "/api/trash",
+      "/api/shared",
+      "/api/activity",
+      "/api/storage"
+    ]
+  });
+}
   try {
     // ---- healthcheck ----
     if (pathname === "/api/health" && method === "GET") {
