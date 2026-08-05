@@ -9,6 +9,24 @@
 </head>
 <body>
 
+<!-- ================= LOADING ================= -->
+<div id="loading-screen">
+  <div class="loading-logo">
+    <svg viewBox="0 0 64 64" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ndGradLoad" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stop-color="#4c1d95"/>
+          <stop offset="1" stop-color="#c026d3"/>
+        </linearGradient>
+      </defs>
+      <polyline points="8,52 8,12 30,52 30,12" fill="none" stroke="url(#ndGradLoad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M28 10h16l10 10v30a4 4 0 0 1-4 4H32a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4Z" fill="#fff" stroke="#181829" stroke-width="2.5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="loading-spinner"></div>
+  <p class="loading-text">Carregando NextDoc…</p>
+</div>
+
 <!-- ================= LOGIN ================= -->
 <div id="login-screen">
   <div class="login-card">
@@ -31,25 +49,48 @@
     <p class="login-title"><span class="nd-next">Next</span><span class="nd-doc">doc</span></p>
     <p class="login-sub">Mais que documentos.<br>Soluções para o <b>amanhã</b>.</p>
 
-    <div id="login-error" class="login-error hidden">Usuário ou senha inválidos.</div>
-
-    <form id="login-form">
-      <div class="field">
-        <label for="username">Usuário</label>
-        <input type="text" id="username" placeholder="Nome de usuário" autocomplete="username">
-      </div>
-      <div class="field">
-        <label for="password">Senha</label>
-        <input type="password" id="password" placeholder="Sua senha" autocomplete="current-password">
-      </div>
-      <button type="submit" class="btn-primary">Entrar</button>
-    </form>
-
-    <div class="login-hint">
-      <b>Credenciais de teste:</b><br>
-      Corporativo: <b>corporativo</b> / corp123<br>
-      Comum: <b>comum</b> / user123
+    <!-- ---- ENTRAR ---- -->
+    <div id="login-form-wrap">
+      <div id="login-error" class="login-error hidden">Usuário ou senha inválidos.</div>
+      <form id="login-form">
+        <div class="field">
+          <label for="username">Usuário</label>
+          <input type="text" id="username" placeholder="Nome de usuário" autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="password">Senha</label>
+          <input type="password" id="password" placeholder="Sua senha" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-primary">Entrar</button>
+      </form>
+      <p class="auth-switch">Não tem conta? <a href="javascript:void(0)" onclick="__showSignup()">Criar conta</a></p>
     </div>
+
+    <!-- ---- CRIAR CONTA ---- -->
+    <div id="signup-form-wrap" class="hidden">
+      <div id="signup-error" class="login-error hidden"></div>
+      <form id="signup-form">
+        <div class="field">
+          <label for="signup-username">Usuário</label>
+          <input type="text" id="signup-username" placeholder="Escolha um nome de usuário" autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="signup-password">Senha</label>
+          <input type="password" id="signup-password" placeholder="Crie uma senha" autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label for="signup-email">Email</label>
+          <input type="email" id="signup-email" placeholder="seu@email.com" autocomplete="email">
+        </div>
+        <label class="checkbox-option">
+          <input type="checkbox" id="signup-fullaccess">
+          <span>Solicitar acesso total aos documentos (o Admin precisa aprovar)</span>
+        </label>
+        <button type="submit" class="btn-primary">Criar conta</button>
+      </form>
+      <p class="auth-switch">Já tem conta? <a href="javascript:void(0)" onclick="__showLogin()">Entrar</a></p>
+    </div>
+
     <p class="login-footer">🔒 Seus documentos estão seguros conosco</p>
   </div>
 </div>
@@ -76,6 +117,8 @@
     <button class="nav-item" data-page="pastas"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg> Minhas Pastas</button>
     <button class="nav-item" data-page="compartilhados"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-3.9M8.6 13.5l6.8 3.9"/></svg> Compartilhados</button>
     <button class="nav-item" data-page="recentes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Recentes</button>
+    <button class="nav-item" data-page="empresa"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1"/></svg> Docs da Empresa</button>
+    <button class="nav-item" data-page="solicitacoes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6M16 3v4M8 3v4M3 10h18m0 5-3 3m0 0-3-3m3 3v-7"/></svg> Solicitações</button>
     <button class="nav-item" data-page="lixeira"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0-1 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 6"/></svg> Lixeira</button>
     <button class="nav-item" data-page="atividades"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/><path d="M3 12h2m14 0h2M12 3v2m0 14v2"/></svg> Atividades</button>
     <button class="nav-item" data-page="configuracoes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg> Configurações</button>
@@ -102,7 +145,8 @@
       <div class="preview-line"></div>
       <div class="preview-line"></div>
     </div>
-    <p class="preview-note">🔒 Pré-visualização protegida — conteúdo real disponível após o download</p>
+    <div class="preview-real hidden" id="preview-real"></div>
+    <p class="preview-note" id="preview-note">🔒 Pré-visualização protegida — conteúdo real disponível após o download</p>
     <button class="btn-primary" id="preview-download-btn">Baixar arquivo</button>
   </div>
 </div>

@@ -14,16 +14,25 @@ empilhando conforme a necessidade:
                                  └────────────────────────┘
 ```
 
+## 🔑 Login
+
+- **Admin** (acesso total, um só usuário — só quem sabe a senha entra):
+  `admin` / `Admin2026`
+- **Conta demo comum**: `comum` / `user123`
+- Qualquer pessoa também pode **criar uma conta própria** na tela de login
+  (fica com acesso "Comum" por padrão; pode solicitar acesso total ao Admin)
+
 ## 🟢 Nível 1 — só abrir e usar (IndexedDB)
 
-Não precisa instalar nada. Os dados (documentos, lixeira, compartilhados, log de
-atividades) ficam salvos no próprio navegador via **IndexedDB**, e sobrevivem a
-fechar a aba ou reiniciar o computador.
+Não precisa instalar nada. Os dados (documentos, lixeira, log de atividades,
+usuários cadastrados, solicitações de acesso) ficam salvos no próprio
+navegador via **IndexedDB**, e sobrevivem a fechar a aba ou reiniciar o
+computador.
 
 ```
 1. Abra nextdoc/index.html direto no navegador
    (ou com a extensão Live Server no VS Code)
-2. Login: corporativo / corp123  ou  comum / user123
+2. Login: admin / Admin2026  ou  comum / user123  (ou crie uma conta)
 3. Pronto — tudo já persiste sozinho
 ```
 
@@ -33,10 +42,9 @@ fechar a aba ou reiniciar o computador.
 
 ## 🟡 Nível 2 — API própria, fácil de hospedar (recomendado)
 
-Uma API em `api/server.js` escrita **sem nenhuma dependência externa** (só
-módulos nativos do Node.js). Isso significa: sem `npm install` travando, sem
-build nativo pra dar problema, e hospedagem trivial em qualquer serviço que
-rode Node — Render, Railway, Fly.io, uma VPS de $5, o que for.
+Uma API em `api/server.js` escrita **sem nenhuma dependência externa**. Sem
+`npm install` travando, sem build nativo, hospedagem trivial em qualquer
+serviço Node (Render, Railway, Fly.io, uma VPS de $5).
 
 ```bash
 cd api
@@ -44,79 +52,69 @@ node server.js
 ```
 
 O frontend detecta essa API sozinho quando ela está rodando em
-`localhost:3000` e passa a sincronizar os dados com ela automaticamente,
-mantendo o IndexedDB como cache local. Instruções completas de deploy (com
-passo a passo pro Render.com) estão em **`api/README.md`**.
+`localhost:3000` e passa a sincronizar os dados com ela automaticamente.
+Instruções completas de deploy estão em **`api/README.md`**.
 
-## 🔵 Nível 3 — Oracle + PL/SQL (avançado / enterprise)
+## 🔵 Nível 3 — Oracle + PL/SQL (avançado / legado)
 
-Para quem quer um banco de verdade por trás, com toda a lógica de negócio em
-PL/SQL. Aqui o navegador continua conversando só com o `index.html` — quem
-muda é a API, que passa a ser `server/server.js` (usando `node-oracledb`) em
-vez de `api/server.js`.
+> ⚠️ **Importante**: as funcionalidades mais novas (donos de documento,
+> permissões por documento, solicitações de acesso, cadastro de conta, upload
+> de arquivo real) **ainda não foram estendidas para o caminho Oracle**. O
+> pacote `pkg_nextdoc` e `server/server.js` continuam funcionando para o
+> conjunto de recursos anterior (login fixo, CRUD básico de documentos), mas
+> não reconhecem os campos novos. Se for evoluir esse caminho, os arquivos em
+> `database/` e `server/` são o ponto de partida.
 
-### Passo 1 — Banco de dados
+## 🆕 O que tem de novo nesta versão
 
-Use qualquer edição do Oracle (recomendado: [Oracle Database Free](https://www.oracle.com/database/free/)
-rodando local, ou um Autonomous Database na nuvem). Conecte com seu usuário
-(SQL*Plus, SQLcl, SQL Developer, o que preferir) e rode os scripts **nesta ordem**:
-
-```
-database/01_schema.sql    → cria as tabelas
-database/02_seed.sql      → insere os usuários e documentos de teste
-database/03_package.sql   → cria o pacote PL/SQL (pkg_nextdoc) com toda a lógica
-```
-
-### Passo 2 — API Node.js (versão Oracle)
-
-```bash
-cd server
-cp .env.example .env      # edite com os dados da sua conexão Oracle
-npm install                # aqui sim precisa, por causa do node-oracledb
-npm start
-```
-
-### Passo 3 — Abrir o app normalmente
-
-Abra `index.html` de novo (ou dê F5) e faça login. Se a API estiver no ar
-(seja a `api/` leve ou a `server/` com Oracle), você verá o toast
-**"✅ Backend conectado — dados sincronizados"** e, na página
-**Configurações**, o status vai mostrar **"Backend remoto: 🟢 conectado"**.
-
-> As duas APIs (`api/` e `server/`) seguem exatamente o mesmo contrato de
-> endpoints — o frontend não sabe (nem precisa saber) qual das duas está no ar.
+- **Dono e último editor de cada documento** — toda linha de documento mostra
+  quem enviou e quem editou por último
+- **Permissão por documento** — só o dono, o Admin, ou quem foi explicitamente
+  autorizado pode editar um documento
+- **Solicitações de acesso** — usuários "Comum" veem os documentos privados do
+  Admin em **Docs da Empresa**, e podem pedir acesso para editar; o Admin
+  aprova ou nega em **Solicitações**
+- **Cadastro de conta** — tela de login agora tem "Criar conta"; ao se
+  cadastrar, dá pra pedir acesso total (sujeito à aprovação do Admin)
+- **Upload de arquivo real** — a aba Escanear/Enviar agora aceita PDF/imagem de
+  verdade (arraste ou selecione), mostra pré-visualização antes de salvar, e
+  guarda o arquivo de verdade (não mais documentos fictícios)
+- **Pastas renomeadas**: RH, DP, Financeiro, Contabilidade, Atestados
+- **Tela de carregamento** antes de entrar/criar conta
+- **Login do Admin trocado**: agora é `admin` / `Admin2026` (antes era
+  `corporativo` / `corp123`)
 
 ## 📂 Onde cada coisa mora
 
 | Camada | Arquivo | Responsabilidade |
 |---|---|---|
 | Interface | `index.html`, `css/style.css` | Estrutura e visual |
-| Lógica do app | `js/app.js` | Telas, permissões, estado |
-| Persistência local | `js/db.js` | Wrapper de IndexedDB |
-| Ponte com o backend | `js/api.js` | Chamadas fetch → API (qualquer uma das duas) |
+| Lógica do app | `js/app.js` | Telas, permissões, upload real, solicitações |
+| Persistência local | `js/db.js` | Wrapper de IndexedDB (docs, users, requests, etc.) |
+| Ponte com o backend | `js/api.js` | Chamadas fetch → API |
 | **API própria (recomendada)** | `api/server.js` | HTTP puro, zero dependências, dados em `data.json` |
-| API Oracle (avançada) | `server/server.js` | Traduz HTTP em chamadas PL/SQL via `node-oracledb` |
-| Regras de negócio (Oracle) | `database/03_package.sql` | `pkg_nextdoc` (login, mover, restaurar, excluir, log de atividades) |
-| Estrutura de dados (Oracle) | `database/01_schema.sql` | Tabelas Oracle |
-| Dados de teste (Oracle) | `database/02_seed.sql` | Usuários e documentos iniciais |
+| API Oracle (legado) | `server/server.js` | Traduz HTTP em chamadas PL/SQL via `node-oracledb` |
+| Regras de negócio (Oracle) | `database/03_package.sql` | `pkg_nextdoc` (versão anterior de recursos) |
 
 ## ⚠️ Observações honestas
 
-- A API Oracle (`server/`) **não foi testada contra uma instância Oracle real**
-  (não há Oracle disponível no ambiente onde ela foi gerada) — a sintaxe PL/SQL
-  e as chamadas `node-oracledb` seguem os padrões oficiais, mas vale rodar e
-  ajustar detalhes finos se algo não bater exatamente com a sua versão do Oracle.
-- A API própria (`api/`), por outro lado, **foi executada e testada de verdade**
-  neste ambiente — login, criação de documento, mover/restaurar da lixeira,
-  renomear/mover, log de atividades e cálculo de armazenamento foram todos
-  verificados via `curl` contra o servidor rodando.
-- A API própria guarda os dados em `data.json` (arquivo em disco). Isso funciona
-  bem em serviços com processo persistente (Render, Railway, VPS), mas **não
-  funciona em hospedagem serverless** (Vercel Functions, AWS Lambda), já que o
-  sistema de arquivos é apagado a cada execução ali. Detalhes em `api/README.md`.
-- Por simplicidade, tanto o IndexedDB quanto a API própria guardam um único
-  "pool" de documentos compartilhado entre os dois usuários de teste — já o
-  schema Oracle já modela `owner_user` corretamente, caso você queira evoluir
-  o app depois para isolar dados por usuário de verdade.
+- A API própria (`api/`) **foi executada e testada de verdade** neste
+  ambiente — login, cadastro, upload de arquivo real (base64), solicitações de
+  acesso (criar + aprovar + negar), e a migração de dados de uma versão
+  anterior foram todos verificados via `curl` contra o servidor rodando.
+- **Arquivos reais** ficam guardados como base64 dentro do próprio registro do
+  documento (tanto no IndexedDB quanto no `data.json` da API). Isso é simples
+  e funciona bem para arquivos pequenos (limite de 8MB no upload), mas não é
+  o ideal para arquivos grandes ou em grande volume — para isso, o caminho
+  certo seria armazenamento de objetos (S3, R2, etc.) ou um banco de verdade.
+- **Permissões são aplicadas no frontend**, não no servidor. Isso significa
+  que alguém com conhecimento técnico poderia inspecionar as respostas de rede
+  e ver documentos que não deveria. Para um sistema de produção de verdade, o
+  ideal é o servidor filtrar os dados por usuário antes de responder — aqui,
+  por simplicidade (e pra manter a API sem dependências), essa responsabilidade
+  ficou com o app.
+- Se você já tinha a API antiga rodando (com o login `corporativo`), o
+  `data.json` existente é migrado automaticamente — a conta `admin` é
+  adicionada sem apagar nada que já existia.
 - Senhas estão em texto puro só para fins de demonstração — numa aplicação
-  real, use hash (bcrypt/Argon2) e nunca senhas literais em tabelas ou arquivos.
+  real, use hash (bcrypt/Argon2).
