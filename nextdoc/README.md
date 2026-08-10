@@ -67,22 +67,23 @@ Instruções completas de deploy estão em **`api/README.md`**.
 
 ## 🆕 O que tem de novo nesta versão
 
-- **Dono e último editor de cada documento** — toda linha de documento mostra
-  quem enviou e quem editou por último
-- **Permissão por documento** — só o dono, o Admin, ou quem foi explicitamente
-  autorizado pode editar um documento
-- **Solicitações de acesso** — usuários "Comum" veem os documentos privados do
-  Admin em **Docs da Empresa**, e podem pedir acesso para editar; o Admin
-  aprova ou nega em **Solicitações**
-- **Cadastro de conta** — tela de login agora tem "Criar conta"; ao se
-  cadastrar, dá pra pedir acesso total (sujeito à aprovação do Admin)
-- **Upload de arquivo real** — a aba Escanear/Enviar agora aceita PDF/imagem de
-  verdade (arraste ou selecione), mostra pré-visualização antes de salvar, e
-  guarda o arquivo de verdade (não mais documentos fictícios)
+- **Logo nova** — ícone atualizado (fita em "N" + documento, ambos em gradiente roxo, com o detalhe dos pontinhos), aplicado na tela de carregamento, login e sidebar
+- **Prazo de guarda documental** — cada categoria de pasta tem um prazo de guarda sugerido (RH: 5 anos, DP: 30 anos, Financeiro: 5 anos, Contabilidade: 5 anos, Atestados: 5 anos). Cada documento mostra até quando deve ser guardado, com aviso visual quando o prazo está próximo de vencer ou já venceu
+- **Dono e último editor de cada documento** — toda linha de documento mostra quem enviou e quem editou por último
+- **Permissão por documento** — só o dono, o Admin, ou quem foi explicitamente autorizado pode editar um documento
+- **Solicitações de acesso** — usuários "Comum" veem os documentos privados do Admin em **Docs da Empresa**, e podem pedir acesso para editar; o Admin aprova ou nega em **Solicitações**
+- **Cadastro de conta** — tela de login agora tem "Criar conta", com opção de pedir acesso total (sujeito à aprovação do Admin)
+- **Upload de arquivo real** — a aba Escanear/Enviar aceita PDF/imagem de verdade, mostra pré-visualização antes de salvar, e guarda o arquivo de verdade
 - **Pastas renomeadas**: RH, DP, Financeiro, Contabilidade, Atestados
 - **Tela de carregamento** antes de entrar/criar conta
-- **Login do Admin trocado**: agora é `admin` / `Admin2026` (antes era
-  `corporativo` / `corp123`)
+- **Login do Admin trocado**: agora é `admin` / `Admin2026`
+
+> ⚠️ **Sobre o prazo de guarda**: os valores (5, 30 anos etc.) são **sugestões
+> padrão para fins de organização**, não uma orientação jurídica. O prazo real
+> exigido por lei varia por tipo específico de documento e pode mudar com a
+> legislação — para uso em produção, confirme os prazos corretos com um
+> profissional de contabilidade/jurídico antes de confiar neles para descarte
+> de documentos.
 
 ## 📂 Onde cada coisa mora
 
