@@ -28,12 +28,16 @@
   function isAdmin(){ return !!state.user && state.user.type === "Admin"; }
 
   // ================= PASTAS =================
+  // Prazos de guarda sugeridos por categoria (em anos). São valores
+  // ilustrativos/padrão para fins de organização — não constituem orientação
+  // jurídica; o prazo real de cada tipo de documento pode variar conforme
+  // legislação vigente e deve ser confirmado com um profissional da área.
   const FOLDER_META = {
-    "RH":            { color: "#7c3aed", bg: "#f2ebfe", icon: "🧑‍💼", full: "Recursos Humanos" },
-    "DP":            { color: "#f2a900", bg: "#fdf1da", icon: "🗂️", full: "Departamento Pessoal" },
-    "Financeiro":    { color: "#a855f7", bg: "#f7ecfe", icon: "💰", full: "Financeiro" },
-    "Contabilidade": { color: "#5b6178", bg: "#eceef5", icon: "📊", full: "Contabilidade" },
-    "Atestados":     { color: "#f4714f", bg: "#fdece5", icon: "🩺", full: "Atestados" }
+    "RH":            { color: "#7c3aed", bg: "#f2ebfe", icon: "🧑‍💼", full: "Recursos Humanos",     retention: 5  },
+    "DP":            { color: "#f2a900", bg: "#fdf1da", icon: "🗂️", full: "Departamento Pessoal",   retention: 30 },
+    "Financeiro":    { color: "#a855f7", bg: "#f7ecfe", icon: "💰", full: "Financeiro",             retention: 5  },
+    "Contabilidade": { color: "#5b6178", bg: "#eceef5", icon: "📊", full: "Contabilidade",          retention: 5  },
+    "Atestados":     { color: "#f4714f", bg: "#fdece5", icon: "🩺", full: "Atestados",              retention: 5  }
   };
 
   let state = {
@@ -335,6 +339,31 @@
     return parts.join(" · ");
   }
 
+  // ---------- prazo de guarda ----------
+  function parsePtBrDate(str){
+    if (!str) return new Date();
+    const datePart = str.split(" ")[0];
+    const [d,m,y] = datePart.split("/").map(Number);
+    return new Date(y, (m||1)-1, d||1);
+  }
+  function formatPtBrDate(date){ return date.toLocaleDateString("pt-BR"); }
+  function retentionUntil(doc){
+    const meta = FOLDER_META[doc.folder];
+    const years = meta ? meta.retention : 5;
+    const base = parsePtBrDate(doc.date);
+    const until = new Date(base);
+    until.setFullYear(until.getFullYear() + years);
+    return until;
+  }
+  function retentionBadge(doc){
+    const until = retentionUntil(doc);
+    const untilStr = formatPtBrDate(until);
+    const daysLeft = Math.round((until - new Date()) / (1000*60*60*24));
+    if (daysLeft < 0) return `<span class="tag tag-retention-expired">⚠️ prazo vencido em ${untilStr}</span>`;
+    if (daysLeft <= 60) return `<span class="tag tag-retention-soon">⏳ guarda vence em ${untilStr}</span>`;
+    return `<span class="tag tag-retention-ok">🗓️ guarda até ${untilStr}</span>`;
+  }
+
   function docRowHTML(d, opts){
     opts = opts || {};
     const src = opts.trashed ? "trash" : "docs";
@@ -343,7 +372,7 @@
         <div class="file-icon" style="cursor:pointer;" onclick="__openPreview(${d.id}, '${src}')">${d.fileType && d.fileType.startsWith("image/") ? "🖼️" : "📄"}</div>
         <div class="file-info">
           <div class="file-name clickable" onclick="__openPreview(${d.id}, '${src}')">${d.name} <span title="Criptografado">🔒</span></div>
-          <div class="file-meta"><span class="tag">${d.folder}</span> ${d.date} · ${d.size}</div>
+          <div class="file-meta"><span class="tag">${d.folder}</span> ${d.date} · ${d.size} ${opts.trashed ? "" : retentionBadge(d)}</div>
           <div class="file-owner-line">${ownerLine(d)}</div>
         </div>
         <div class="row-actions">
@@ -483,6 +512,7 @@
     if (d.date) metaParts.push(d.date);
     if (d.size) metaParts.push(d.size);
     metaParts.push(ownerLine(d));
+    if (!state.trash.includes(d)) metaParts.push(retentionBadge(d));
     document.getElementById("preview-meta").innerHTML = metaParts.join(" · ");
 
     const realBox = document.getElementById("preview-real");
@@ -593,6 +623,7 @@
           <div class="icon" style="background:${meta.bg};">${meta.icon}</div>
           <h3>${f}</h3>
           <p>${meta.full}</p>
+          <p class="folder-retention">🗓️ Guarda sugerida: ${meta.retention} ${meta.retention===1?"ano":"anos"}</p>
         </div>`;
     }).join("");
     return `
@@ -873,10 +904,11 @@
             </div>
             <div class="form-row">
               <label>Pasta *</label>
-              <select id="doc-folder" required>
+              <select id="doc-folder" required onchange="__updateRetentionHint(this.value)">
                 <option value="">Selecione uma pasta</option>
                 ${Object.keys(FOLDER_META).map(f=>`<option value="${f}">${f} — ${FOLDER_META[f].full}</option>`).join("")}
               </select>
+              <p id="retention-hint" class="retention-hint hidden"></p>
             </div>
             <div class="form-row">
               <label>Visibilidade</label>
@@ -945,6 +977,15 @@
     reader.onerror = function(){ toast("Não foi possível ler o arquivo."); };
     reader.readAsDataURL(file);
   }
+
+  window.__updateRetentionHint = function(folder){
+    const box = document.getElementById("retention-hint");
+    if (!box) return;
+    if (!folder){ box.classList.add("hidden"); return; }
+    const years = FOLDER_META[folder].retention;
+    box.textContent = `🗓️ Documentos em "${folder}" têm prazo de guarda sugerido de ${years} ${years===1?"ano":"anos"} a partir do envio.`;
+    box.classList.remove("hidden");
+  };
 
   window.__submitUpload = function(e){
     e.preventDefault();
