@@ -137,6 +137,36 @@
     });
   }
 
+  // busca as solicitações de acesso mais recentes do backend (corrige o caso
+  // de uma solicitação criada em outro dispositivo não aparecer aqui)
+  let refreshingRequests = false;
+  async function refreshAccessRequests(silent){
+    if (!state.user || refreshingRequests) return;
+    const ok = await SecureAPI.isAvailable();
+    if (!ok) { if (!silent) toast("Backend não disponível no momento."); return; }
+    refreshingRequests = true;
+    try {
+      const requests = await SecureAPI.listAccessRequests();
+      if (Array.isArray(requests)){
+        state.accessRequests = requests;
+        const maxReqId = Math.max(0, ...requests.map(r=>r.id));
+        if (maxReqId >= state.nextReqId) state.nextReqId = maxReqId + 1;
+        persistAll();
+        if (["dashboard","solicitacoes","empresa"].includes(currentPage)) render();
+        if (!silent) toast("Solicitações atualizadas");
+      }
+    } catch (err){
+      console.warn("Falha ao atualizar solicitações:", err.message);
+      if (!silent) toast("Não foi possível atualizar agora");
+    }
+    refreshingRequests = false;
+  }
+  window.__refreshRequests = () => refreshAccessRequests(false);
+
+  // atualiza silenciosamente em segundo plano enquanto o app estiver aberto,
+  // pra quem é Admin não precisar mais deslogar/logar pra ver pedidos novos
+  setInterval(() => refreshAccessRequests(true), 25000);
+
   function toast(msg){
     const t = document.getElementById("toast");
     t.textContent = msg;
@@ -173,13 +203,34 @@
     const u = document.getElementById("username").value.trim().toLowerCase();
     const p = document.getElementById("password").value;
     const errorBox = document.getElementById("login-error");
+    errorBox.classList.add("hidden");
+    showLoading();
+    await waitLoading(400);
+
+    // se o backend estiver disponível, ele é a fonte de verdade (permite
+    // logar em qualquer dispositivo, não só no que criou a conta)
+    const backendOk = await SecureAPI.isAvailable();
+    if (backendOk){
+      try {
+        const remote = await SecureAPI.login(u, p);
+        if (remote && remote.ok){
+          const userRecord = { password: p, type: remote.type, label: remote.label, email: remote.email };
+          state.users[u] = userRecord; // guarda localmente pra funcionar offline da próxima vez
+          await persistUsers();
+          await completeLogin(u, userRecord);
+          return;
+        }
+      } catch (err){
+        console.warn("Login remoto indisponível, tentando localmente:", err.message);
+      }
+    }
+
+    // fallback: checa a conta salva neste navegador
     const match = state.users[u];
     if (match && match.password === p){
-      errorBox.classList.add("hidden");
-      showLoading();
-      await waitLoading(700);
       await completeLogin(u, match);
     } else {
+      hideLoading();
       errorBox.classList.remove("hidden");
     }
   });
@@ -199,19 +250,25 @@
     const backendOk = await SecureAPI.isAvailable();
     if (backendOk){
       try {
-        const [docs, trash, activity, storage] = await Promise.all([
+        const [docs, trash, activity, storage, requests] = await Promise.all([
           SecureAPI.getDocs(username), SecureAPI.getTrash(username),
-          SecureAPI.getActivity(username), SecureAPI.getStorage(username)
+          SecureAPI.getActivity(username), SecureAPI.getStorage(username),
+          SecureAPI.listAccessRequests()
         ]);
         if (Array.isArray(docs) && docs.length){
           state.docs = docs.map(mapRemoteDoc);
           state.trash = trash.map(mapRemoteDoc);
           state.activityLog = activity.map(r=>({ action:r.ACTION_NAME, detail:r.DETAIL_TXT, icon:r.ICON, time:r.LOGGED_STR, by:r.BY||"" })).reverse();
           if (storage && typeof storage.usedGB === "number") state.storageUsedGB = storage.usedGB;
-          persistAll();
-          toast("✅ Backend conectado — dados sincronizados");
-          render();
         }
+        if (Array.isArray(requests)){
+          state.accessRequests = requests;
+          const maxReqId = Math.max(0, ...requests.map(r=>r.id));
+          if (maxReqId >= state.nextReqId) state.nextReqId = maxReqId + 1;
+        }
+        persistAll();
+        toast("✅ Backend conectado — dados sincronizados");
+        render();
       } catch (err){
         console.warn("Falha ao sincronizar com o backend, mantendo dados locais:", err.message);
       }
@@ -305,6 +362,7 @@
     currentPage = page;
     document.querySelectorAll(".nav-item").forEach(b=> b.classList.toggle("active", b.dataset.page===page));
     render();
+    if (["solicitacoes","empresa","dashboard"].includes(page)) refreshAccessRequests(true);
   }
   window.__navigate = navigate;
 
@@ -706,7 +764,10 @@
     }
 
     return `
-      <p class="page-title">Documentos da Empresa</p>
+      <div class="app-topbar" style="margin-bottom:14px;">
+        <p class="page-title" style="margin:0;">Documentos da Empresa</p>
+        <button class="icon-btn" style="margin-left:auto;" title="Atualizar status das solicitações" onclick="__refreshRequests()">🔄 Atualizar</button>
+      </div>
       <p class="page-sub">Documentos privados do Admin — solicite acesso para poder editar</p>
 
       ${unlocked.length ? `<h3 style="font-size:14px;margin:0 0 10px;">✅ Liberados para você</h3>` + unlocked.map(d=>docRowHTML(d)).join("") : ""}
@@ -762,7 +823,10 @@
     }
 
     return `
-      <p class="page-title">Solicitações de Acesso</p>
+      <div class="app-topbar" style="margin-bottom:14px;">
+        <p class="page-title" style="margin:0;">Solicitações de Acesso</p>
+        <button class="icon-btn" style="margin-left:auto;" title="Buscar solicitações novas" onclick="__refreshRequests()">🔄 Atualizar</button>
+      </div>
       <p class="page-sub">Aprove ou negue pedidos de acesso total e a documentos específicos</p>
       <h3 style="font-size:14px;margin:0 0 10px;">Pendentes (${pending.length})</h3>
       ${pending.length ? pending.map(r=>rowFor(r,true)).join("") : `<div class="empty-state"><div class="e-icon">📭</div>Nenhuma solicitação pendente.</div>`}
