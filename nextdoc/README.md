@@ -67,6 +67,8 @@ Instruções completas de deploy estão em **`api/README.md`**.
 
 ## 🆕 O que tem de novo nesta versão
 
+- **Correção: solicitações de acesso agora chegam ao Admin de outros dispositivos** — antes, o login nunca buscava as solicitações do backend; agora ele busca, atualiza sozinho a cada 25s enquanto o app está aberto, e tem um botão "🔄 Atualizar" nas páginas de Solicitações e Docs da Empresa
+- **Correção: login agora funciona em qualquer dispositivo** — antes, uma conta criada em um navegador só conseguia logar naquele mesmo navegador; agora o login consulta o backend primeiro (quando disponível), então uma conta criada no celular já loga normalmente no computador
 - **Logo nova** — ícone atualizado (fita em "N" + documento, ambos em gradiente roxo, com o detalhe dos pontinhos), aplicado na tela de carregamento, login e sidebar
 - **Prazo de guarda documental** — cada categoria de pasta tem um prazo de guarda sugerido (RH: 5 anos, DP: 30 anos, Financeiro: 5 anos, Contabilidade: 5 anos, Atestados: 5 anos). Cada documento mostra até quando deve ser guardado, com aviso visual quando o prazo está próximo de vencer ou já venceu
 - **Dono e último editor de cada documento** — toda linha de documento mostra quem enviou e quem editou por último
